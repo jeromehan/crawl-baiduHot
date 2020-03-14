@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js",
     "dev": "node app.js",
+    "devCrawl": "node index.js",
     "build": "pm2 start app.js",
+    "buildCrawl": "pm2 start index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
