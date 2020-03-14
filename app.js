@@ -25,11 +25,18 @@ app.use(cors({
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
 })
 )
+router.get('/api/bdTimeHot', async (ctx) => {
+    ctx.response.type = 'json'
+    ctx.response.body = fs.createReadStream('./百度实时热点.json')
+})
 router.get('/api/bdTodayHot', async (ctx) => {
     ctx.response.type = 'json'
     ctx.response.body = fs.createReadStream('./百度今日热点.json')
 })
-
+router.get('/api/bdWeekHot', async (ctx) => {
+    ctx.response.type = 'json'
+    ctx.response.body = fs.createReadStream('./百度七日热点.json')
+})
 /*启动路由*/
 app.use(router.routes())
     .use(router.allowedMethods());
