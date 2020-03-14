@@ -60,6 +60,7 @@ async function main() {
         await page.close();
         await browser.close();
     } catch (error) {
+        console.log('-------爬取失败--------');
         await page.close();
         await browser.close();
     }
