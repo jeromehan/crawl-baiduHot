@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 let fs = require('fs');
 const path = require('path');
-(async () => {
+async function main() {
     const bdWeekUrl = 'http://top.baidu.com/buzz?b=42&c=513&fr=topbuzz_b341_c513'
     const bdTodayUrl = 'http://top.baidu.com/buzz?b=341&c=513&fr=topbuzz_b1_c513'
     const bdTimeUrl = 'http://top.baidu.com/buzz?b=1&c=513&fr=topbuzz_b341_c513'
@@ -41,22 +41,29 @@ const path = require('path');
         // 百度七日热点
         await page.goto(bdWeekUrl);
         let bdWeekHot = await page.evaluate(getBdHot);
-        fs.writeFileSync(path.resolve(__dirname, './百度七日热点.json'), JSON.stringify(bdWeekHot, null, 2));
+        if (bdWeekHot.length > 0) {
+            fs.writeFileSync(path.resolve(__dirname, './百度七日热点.json'), JSON.stringify(bdWeekHot, null, 2));
+        }
         // 百度今日热点
         await page.goto(bdTodayUrl);
         let bdToadyHot = await page.evaluate(getBdHot);
-        fs.writeFileSync(path.resolve(__dirname, './百度今日热点.json'), JSON.stringify(bdToadyHot, null, 2));
+        if (bdToadyHot.length > 0) {
+            fs.writeFileSync(path.resolve(__dirname, './百度今日热点.json'), JSON.stringify(bdToadyHot, null, 2));
+        }
         // 百度实时热点
         await page.goto(bdTimeUrl);
         let bdTimeHot = await page.evaluate(getBdHot);
-        fs.writeFileSync(path.resolve(__dirname, './百度实时热点.json'), JSON.stringify(bdTimeHot, null, 2));
+        if (bdTimeHot.length > 0) {
+            fs.writeFileSync(path.resolve(__dirname, './百度实时热点.json'), JSON.stringify(bdTimeHot, null, 2));
+        }
+        console.log('-------爬取成功--------');
         await page.close();
         await browser.close();
     } catch (error) {
         await page.close();
         await browser.close();
     }
-})();
+};
 function getBdHot() {
     let result = []
     $('.list-table tbody tr:not(:first-child)').each(function () {
@@ -71,4 +78,12 @@ function getBdHot() {
     })
     return result
 }
+const schedule = require('node-schedule');
+// 定义规则
+let rule = new schedule.RecurrenceRule();
+rule.second = [0, 10, 20, 30, 40, 50]; // 每隔 10 秒爬取一次
+// 启动任务
+schedule.scheduleJob(rule, () => {
+    main()
+});
 
